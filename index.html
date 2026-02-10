@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Call Center</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="app-container">
+        <!-- Login/Register View -->
+        <div id="auth-view" class="view active">
+            <div class="auth-container">
+                <h1 id="auth-title">Login</h1>
+                <p id="auth-error" class="error-message"></p>
+                <form id="auth-form">
+                    <div class="input-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" id="auth-button">Login</button>
+                </form>
+                <p class="auth-toggle">
+                    <span id="auth-toggle-text">Don't have an account?</span>
+                    <a href="#" id="auth-toggle-link">Register</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Chat View -->
+        <div id="chat-view" class="view">
+            <header class="chat-header">
+                <h2>AI Agent</h2>
+                <button id="logout-button">Logout</button>
+            </header>
+            <div id="chat-window">
+                <div id="chat-messages">
+                    <!-- Messages will be injected here -->
+                </div>
+            </div>
+            <footer class="chat-footer">
+                <form id="chat-form">
+                    <input type="text" id="message-input" placeholder="Type your message..." autocomplete="off">
+                    <button type="submit">Send</button>
+                </form>
+            </footer>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
