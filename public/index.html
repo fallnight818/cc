@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatApp - Telegram Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #fff;
+            min-height: 100vh;
+        }
+
+        /* ===== LOGIN PAGE ===== */
+        .login-container {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .login-box h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 12px;
+        }
+
+        .login-box p {
+            color: #999;
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        #google-signin-container {
+            margin-bottom: 24px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 24px 0;
+            color: #ccc;
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .manual-login {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: left;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #000;
+            font-size: 12px;
+        }
+
+        .input-group input {
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* ===== MAIN APP ===== */
+        .app-container {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            grid-template-columns: 280px 1fr 360px;
+            gap: 0;
+            background: #fff;
+        }
+
+        .app-container.active {
+            display: grid;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            background: #fff;
+            border-right: 1px solid #e5e5e5;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #000;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .menu-btn:hover {
+            background: #e8e8e8;
+        }
+
+        .search-box {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #222;
+            font-family: inherit;
+        }
+
+        .search-box input::placeholder {
+            color: #999;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            background: #e8e8e8;
+        }
+
+        .friends-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .friend-item {
+            padding: 8px 12px;
+            margin-bottom: 2px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            position: relative;
+        }
+
+        .friend-item:hover {
+            background: #f0f0f0;
+        }
+
+        .friend-item.active {
+            background: #e7f3ff;
+        }
+
+        .friend-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .friend-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .friend-name {
+            font-weight: 500;
+            color: #000;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .friend-status {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #31a24c;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-right: 1px solid #e5e5e5;
+        }
+
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            color: #999;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+        }
+
+        .empty-state h2 {
+            color: #000;
+            font-size: 20px;
+        }
+
+        .chat-header {
+            padding: 12px 20px;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-header-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .chat-header-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .chat-header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #e8e8e8;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .message.sent {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 55%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message-bubble.sent {
+            background: #e7f3ff;
+            color: #000;
+            border-radius: 14px 2px 14px 14px;
+        }
+
+        .message-bubble.received {
+            background: #f0f0f0;
+            color: #000;
+            border-radius: 2px 14px 14px 14px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+            padding: 0 4px;
+        }
+
+        .input-area {
+            padding: 12px 20px 20px;
+            border-top: 1px solid #e5e5e5;
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 13px;
+            font-family: inherit;
+            resize: none;
+            max-height: 100px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+            color: white;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover {
+            background: #764ba2;
+        }
+
+        /* ===== VIDEO SECTION ===== */
+        .video-section {
+            background: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #e5e5e5;
+        }
+
+        .video-container {
+            flex: 1;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-empty {
+            color: #999;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .video-empty-icon {
+            font-size: 48px;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remote-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .local-video {
+            position: absolute;
+            bottom: 60px;
+            right: 12px;
+            width: 120px;
+            height: 160px;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+        }
+
+        .call-info {
+            padding: 16px;
+            text-align: center;
+            color: #999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .call-info-title {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .call-duration {
+            font-size: 12px;
+        }
+
+        .video-controls {
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .video-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .video-btn.mic {
+            background: #667eea;
+            color: white;
+        }
+
+        .video-btn.mic:hover {
+            background: #764ba2;
+        }
+
+        .video-btn.camera {
+            background: #667eea;
+            color: white;
+        }
+
+        .video-btn.camera:hover {
+            background: #764ba2;
+        }
+
+        .video-btn.hang-up {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .video-btn.hang-up:hover {
+            background: #c0392b;
+        }
+
+        /* ===== ADD FRIEND MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 16px;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-footer .btn {
+            flex: 1;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #000;
+        }
+
+        .btn-secondary:hover {
+            background: #e8e8e8;
+        }
+
+        .scrollable::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollable::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scrollable::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        .scrollable::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 280px 1fr;
+            }
+
+            .video-section {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN PAGE -->
+    <div class="login-container" id="login-container">
+        <div class="login-box">
+            <h1>ChatApp</h1>
+            <p>Stay connected with your friends</p>
+
+            <div id="google-signin-container"></div>
+
+            <div class="divider">or</div>
+
+            <div class="manual-login">
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="login-email" placeholder="your@email.com">
+                </div>
+                <div class="input-group">
+                    <label>Name</label>
+                    <input type="text" id="login-name" placeholder="Your Name">
+                </div>
+                <button class="btn btn-primary" onclick="manualLogin()">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div class="app-container" id="app-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">Chats</div>
+                <div class="sidebar-menu">
+                    <button class="menu-btn" title="Add Friend" onclick="openAddFriendModal()">➕</button>
+                    <button class="menu-btn" title="Logout" onclick="logout()">🚪</button>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="search-friends" placeholder="Search..." onkeyup="searchFriends()">
+            </div>
+
+            <div class="friends-list scrollable" id="friends-list"></div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div id="home-view" style="display: flex; flex-direction: column; height: 100%;">
+                <div class="empty-state">
+                    <div class="empty-state-icon">💬</div>
+                    <h2>Select a friend to chat</h2>
+                    <p>Choose a friend from the list or add a new one</p>
+                </div>
+            </div>
+
+            <div id="chat-view" style="display: none; flex-direction: column; height: 100%;">
+                <div class="chat-header">
+                    <div class="chat-header-info">
+                        <div class="chat-header-avatar" id="chat-avatar">J</div>
+                        <div>
+                            <div class="chat-header-title" id="chat-name">John Doe</div>
+                            <div class="friend-status" id="chat-status">Online</div>
+                        </div>
+                    </div>
+                    <div class="chat-header-actions">
+                        <button class="action-btn" title="Audio Call" onclick="startAudioCall()">📞</button>
+                        <button class="action-btn" title="Video Call" onclick="startVideoCall()">📹</button>
+                    </div>
+                </div>
+
+                <div class="messages scrollable" id="messages-container"></div>
+
+                <div class="input-area">
+                    <input type="text" class="message-input" id="message-input" placeholder="Aa" onkeypress="handleMessageKeypress(event)">
+                    <button class="send-btn" onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIDEO SECTION -->
+        <div class="video-section">
+            <div class="video-container" id="video-container">
+                <video id="remote-video" class="remote-video"></video>
+                <video id="local-video" class="local-video" muted></video>
+                <div class="video-empty" id="video-empty">
+                    <div class="video-empty-icon">📞</div>
+                    <div>No active call</div>
+                </div>
+            </div>
+
+            <div class="call-info" id="call-info" style="display: none;">
+                <div class="call-info-title" id="call-name">John Doe</div>
+                <div class="call-duration" id="call-duration">00:00</div>
+            </div>
+
+            <div class="video-controls" id="video-controls" style="display: none;">
+                <button class="video-btn mic" id="mic-btn" title="Toggle Mic">🎤</button>
+                <button class="video-btn camera" id="camera-btn" title="Toggle Camera">📹</button>
+                <button class="video-btn hang-up" id="hang-up-btn" title="End Call">☎️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD FRIEND MODAL -->
+    <div class="modal" id="add-friend-modal">
+        <div class="modal-content">
+            <div class="modal-header">Add Friend</div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Friend Email</label>
+                    <input type="email" id="friend-email" placeholder="friend@email.com">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddFriendModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addFriend()">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://cdn.peerjs.com/peerjs-1.5.0.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="script.js"></script>
+</body>
+</html>
